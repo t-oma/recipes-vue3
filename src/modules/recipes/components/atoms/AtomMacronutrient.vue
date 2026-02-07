@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { clamp } from "@/utils/numbers";
 import { computed } from "vue";
+
+import { clamp } from "@/shared/utils/numbers";
 
 type Props = {
   label: string;
@@ -20,7 +21,7 @@ const pctStyle = computed(() => `${pct.value}%`);
 
 <template>
   <li
-    class="inline-flex shadow-xs gap-2 flex-col rounded p-2"
+    class="inline-flex flex-col gap-2 rounded p-2 shadow-xs"
   >
     <div class="text-sm">
       <span> {{ label }}: </span>
@@ -28,10 +29,10 @@ const pctStyle = computed(() => `${pct.value}%`);
     </div>
 
     <span
-      class="inline-flex overflow-hidden rounded w-full h-1.5"
+      class="inline-flex h-1.5 w-full overflow-hidden rounded"
       role="progressbar"
       :aria-label="label"
-      :aria-valuenow="percentage.toFixed(0)"
+      :aria-valuenow="percentage"
       aria-valuemin="0"
       aria-valuemax="100"
     >

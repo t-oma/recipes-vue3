@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import AtomMacronutrient from "@/components/atoms/AtomMacronutrient.vue";
-import MoleculeCard from "@/components/molecules/MoleculeCard.vue";
-import DefaultLayout from "@/layouts/DefaultLayout.vue";
-import { dishes, macrosWithDisplayInfo } from "@/mock-data";
+import { DefaultLayout } from "@/app/layouts";
+
+import {
+  AtomMacronutrient,
+  MoleculeCard,
+} from "../components";
+import { dishes } from "../models";
+
+console.log(dishes);
 </script>
 
 <template>
   <DefaultLayout>
-    <main class="flex-1 p-4 space-y-4">
+    <main class="flex-1 space-y-4 p-4">
       <MoleculeCard as="div">
-        <h1 class="text-center font-cursive text-3xl">
+        <h1 class="font-cursive text-center text-3xl">
           Найсмачніші страви
         </h1>
       </MoleculeCard>
@@ -18,7 +23,7 @@ import { dishes, macrosWithDisplayInfo } from "@/mock-data";
         v-for="dish in dishes"
         :key="dish.id"
         as="section"
-        :label="dish.displayName"
+        :label="dish.title"
       >
         <div class="flex flex-col">
           <img
@@ -26,8 +31,8 @@ import { dishes, macrosWithDisplayInfo } from "@/mock-data";
             :alt="dish.image.alt"
             class="rounded-lg"
           />
-          <span class="font-cursive text-4xl py-2">
-            {{ dish.displayName }}
+          <span class="font-cursive py-2 text-4xl">
+            {{ dish.title }}
           </span>
           <p class="text-muted-foreground text-pretty">
             {{ dish.description }}
@@ -36,9 +41,7 @@ import { dishes, macrosWithDisplayInfo } from "@/mock-data";
 
         <ul class="flex justify-between">
           <AtomMacronutrient
-            v-for="macro in macrosWithDisplayInfo(
-              dish.macronutrients,
-            )"
+            v-for="macro in dish.macronutrients"
             :key="macro.key"
             :label="macro.label"
             :amount="macro.amount"

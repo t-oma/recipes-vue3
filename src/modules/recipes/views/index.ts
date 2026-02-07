@@ -1,0 +1,1 @@
+export { default as AllRecipesPage } from "./AllRecipesPage.vue";

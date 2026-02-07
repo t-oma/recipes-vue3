@@ -18,7 +18,7 @@ const hasFrame = computed(() =>
 <template>
   <component
     :is="tag"
-    class="bg-card rounded-lg shadow-xs space-y-4"
+    class="bg-card space-y-4 rounded-lg shadow-xs"
     :class="hasFrame ? 'p-4' : 'p-2'"
     :aria-label="
       tag === 'section' ? props.label : undefined

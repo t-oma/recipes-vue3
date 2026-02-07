@@ -1,13 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '../pages/HomePage.vue'
+import { createRouter, createWebHistory } from "vue-router";
+
+import { AllRecipesPage } from "@/modules/recipes";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: HomePage,
+      path: "/",
+      name: "home",
+      component: AllRecipesPage,
     },
     // {
     //   path: '/about',
@@ -18,6 +19,6 @@ const router = createRouter({
     //   component: () => import('../views/AboutView.vue'),
     // },
   ],
-})
+});
 
-export default router
+export default router;

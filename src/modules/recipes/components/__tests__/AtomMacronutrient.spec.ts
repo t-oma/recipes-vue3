@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
-import AtomMacronutrient from "@/components/atoms/AtomMacronutrient.vue";
 import { describe, expect, it } from "vitest";
+import AtomMacronutrient from "@/components/atoms/AtomMacronutrient.vue";
 
 describe("AtomMacronutrient", () => {
   it("renders label, amount and clamps percentage", () => {

@@ -1,0 +1,1 @@
+export { default as AtomMacronutrient } from "./AtomMacronutrient.vue";

@@ -1,45 +1,7 @@
-import { clamp } from "./utils/numbers";
+import { mapDishDTO } from "./helpers";
+import type { DishDTO } from "./dto";
 
-export const MACRO_KEYS = [
-  "protein",
-  "fat",
-  "carbs",
-] as const;
-export type MacroKey = (typeof MACRO_KEYS)[number];
-
-export const MACRO_LABELS = {
-  protein: "Білки",
-  fat: "Жири",
-  carbs: "Вуглеводи",
-} satisfies Record<MacroKey, string>;
-
-export type MacroGrams = Record<MacroKey, number>;
-export type MacroPercents = Record<MacroKey, number>;
-
-export type Ingredient =
-  | {
-      title: string;
-      amount: number;
-      units: "g" | "зубчики";
-    }
-  | { title: string };
-
-export type Step = {
-  durationSec: number;
-  description: string;
-};
-
-export type Dish = {
-  id: string;
-  image: { alt: string; src: string };
-  title: string;
-  description: string;
-  macronutrients: MacroGrams;
-  ingredients: Ingredient[];
-  steps: Step[];
-};
-
-export const dishes = [
+export const dishesDTO = [
   {
     id: "123abc456def",
     image: {
@@ -131,37 +93,6 @@ export const dishes = [
       },
     ],
   },
-] satisfies Dish[];
+] satisfies DishDTO[];
 
-export function getMacroPercents(grams: MacroGrams): {
-  total: number;
-  percents: MacroPercents;
-} {
-  const total = MACRO_KEYS.reduce(
-    (sum, k) => sum + grams[k],
-    0,
-  );
-
-  const percents = MACRO_KEYS.reduce((acc, k) => {
-    acc[k] = total === 0 ? 0 : (grams[k] / total) * 100;
-    return acc;
-  }, {} as MacroPercents);
-
-  return { total, percents };
-}
-
-export function macrosWithDisplayInfo(macros: MacroGrams) {
-  const { total, percents } = getMacroPercents(macros);
-
-  return MACRO_KEYS.map((key) => ({
-    key,
-    label: MACRO_LABELS[key],
-    amount: macros[key],
-    percentage: clamp(
-      Number.isFinite(percents[key]) ? percents[key] : 0,
-      0,
-      100,
-    ),
-    total,
-  }));
-}
+export const dishes = dishesDTO.map(mapDishDTO);

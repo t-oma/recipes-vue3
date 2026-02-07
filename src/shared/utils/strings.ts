@@ -41,7 +41,7 @@ const CYR_TO_LAT: Record<string, string> = {
   ъ: "",
 };
 
-const translitCyr = (input: string) =>
+export const translitCyr = (input: string) =>
   input.replace(
     /[А-ЯЁЇІЄҐа-яёїієґ]/g,
     (ch) =>
