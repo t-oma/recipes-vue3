@@ -49,7 +49,7 @@ export function mapDishDTO(dish: DishDTO): Dish {
     id: dish.id,
     image: dish.image,
     title: dish.title,
-    slug: slugify(dish.title),
+    slug: slugify(dish.title + " " + dish.id),
     description: dish.description,
     macronutrients: macrosWithDisplayInfo(
       dish.macronutrients,

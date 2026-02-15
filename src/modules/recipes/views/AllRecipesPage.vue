@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { PrinterIcon } from "lucide-vue-next";
 import { DefaultLayout } from "@/app/layouts";
+import { AtomButton } from "@/shared";
 
 import {
   AtomMacronutrient,
@@ -50,7 +52,31 @@ console.log(dishes);
         </ul>
 
         <template #footer>
-          <div>Download</div>
+          <ul
+            class="flex items-center justify-between gap-2"
+          >
+            <li>
+              <AtomButton :to="'/recipes/' + dish.slug">
+                Перейти до приготування
+              </AtomButton>
+            </li>
+            <li>
+              <AtomButton
+                aria-label="Скачать PDF"
+                size="icon"
+                @click="
+                  () => {
+                    console.log('PDF');
+                  }
+                "
+              >
+                <PrinterIcon
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
+              </AtomButton>
+            </li>
+          </ul>
         </template>
       </MoleculeCard>
     </main>

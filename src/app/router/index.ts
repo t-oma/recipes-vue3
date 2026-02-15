@@ -10,6 +10,11 @@ const router = createRouter({
       name: "home",
       component: AllRecipesPage,
     },
+    {
+      path: "/recipes/:slug",
+      name: "details",
+      component: AllRecipesPage,
+    },
     // {
     //   path: '/about',
     //   name: 'about',
