@@ -1,0 +1,7 @@
+{
+    "*.ts": [
+        "pnpm eslint src --fix",
+        "pnpm prettier src --write"
+    ],
+    "*.{json,md}": ["pnpm prettier src --write"]
+}
