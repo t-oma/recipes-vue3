@@ -6,7 +6,7 @@ export const getAllRecipes = async (
     req: Request,
     res: Response,
     next: NextFunction
-): Promise<void> => {
+) => {
     try {
         const recipes = await recipeService.getAllRecipes();
         res.json(recipes);
@@ -19,7 +19,7 @@ export const getRecipeById = async (
     req: Request,
     res: Response,
     next: NextFunction
-): Promise<void> => {
+) => {
     try {
         const { id } = req.params;
         const recipe = await recipeService.getRecipeById(
@@ -35,7 +35,7 @@ export const createRecipe = async (
     req: Request,
     res: Response,
     next: NextFunction
-): Promise<void> => {
+) => {
     try {
         const {
             title,

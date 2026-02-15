@@ -5,7 +5,7 @@ export const register = async (
     req: Request,
     res: Response,
     next: NextFunction
-): Promise<void> => {
+) => {
     try {
         const { email, password, name } = req.body;
 
@@ -24,7 +24,7 @@ export const login = async (
     req: Request,
     res: Response,
     next: NextFunction
-): Promise<void> => {
+) => {
     try {
         const { email, password } = req.body;
 
