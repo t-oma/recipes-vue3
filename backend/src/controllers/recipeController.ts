@@ -45,18 +45,6 @@ export const createRecipe = async (
         } = req.body;
         const userId = req.user?.userId;
 
-        if (
-            !title ||
-            !description ||
-            !ingredients ||
-            !instructions
-        ) {
-            throw createError(
-                "All fields are required",
-                400
-            );
-        }
-
         if (!userId) {
             throw createError(
                 "User not authenticated",
