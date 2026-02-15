@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { USER_DOCUMENT_NAME } from "./User";
 
 export interface IRecipe extends Document {
     title: string;
@@ -37,7 +38,7 @@ const recipeSchema: Schema = new Schema(
         },
         author: {
             type: Schema.Types.ObjectId,
-            ref: "User",
+            ref: USER_DOCUMENT_NAME,
             required: true,
         },
     },

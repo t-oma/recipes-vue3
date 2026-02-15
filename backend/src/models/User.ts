@@ -33,4 +33,9 @@ const userSchema: Schema = new Schema(
     }
 );
 
-export default mongoose.model<IUser>("User", userSchema);
+export const USER_DOCUMENT_NAME = "User";
+
+export default mongoose.model<IUser>(
+    USER_DOCUMENT_NAME,
+    userSchema
+);
