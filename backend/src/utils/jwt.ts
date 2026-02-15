@@ -1,8 +1,7 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import { JwtPayload } from "../types/express";
 
-const JWT_SECRET =
-    process.env.JWT_SECRET || "fallback-secret-key";
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "24h";
 
 export const generateToken = (
@@ -12,9 +11,9 @@ export const generateToken = (
         expiresIn:
             JWT_EXPIRES_IN as SignOptions["expiresIn"],
     };
-    return jwt.sign(payload, JWT_SECRET, options);
+    return jwt.sign(payload, JWT_SECRET!, options);
 };
 
 export const verifyToken = (token: string): JwtPayload => {
-    return jwt.verify(token, JWT_SECRET) as JwtPayload;
+    return jwt.verify(token, JWT_SECRET!) as JwtPayload;
 };

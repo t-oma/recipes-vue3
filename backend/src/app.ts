@@ -22,6 +22,13 @@ app.use(errorHandler);
 
 const startServer = async () => {
     try {
+        if (
+            !process.env.JWT_SECRET ||
+            process.env.JWT_SECRET.trim() === ""
+        ) {
+            throw new Error("JWT_SECRET not set!");
+        }
+
         await connectDatabase();
 
         app.listen(PORT, () => {
