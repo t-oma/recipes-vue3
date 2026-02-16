@@ -1,12 +1,17 @@
-import Recipe, { IRecipe } from "../models/Recipe";
+import Recipe, {
+    IRecipe,
+    type RecipeIngridient,
+    type RecipeNutrients,
+    type RecipeStep,
+} from "../models/Recipe";
 import { createError } from "../middleware/errorHandler";
 import { isUser } from "../utils/helpers";
 
 export interface CreateRecipeData {
     title: string;
     description: string;
-    ingredients: string[];
-    instructions: string;
+    ingredients: RecipeIngridient[];
+    steps: RecipeStep[];
     authorId: string;
 }
 
@@ -14,8 +19,9 @@ export interface RecipeResponse {
     id: string;
     title: string;
     description: string;
-    ingredients: string[];
-    instructions: string;
+    nutrients: RecipeNutrients;
+    ingredients: RecipeIngridient[];
+    steps: RecipeStep[];
     author: {
         id: string;
         name: string;
@@ -33,8 +39,9 @@ const mapRecipeToResponse = (
         id: recipe._id.toString(),
         title: recipe.title,
         description: recipe.description,
+        nutrients: recipe.nutrients,
         ingredients: recipe.ingredients,
-        instructions: recipe.instructions,
+        steps: recipe.steps,
         author: isUser(author)
             ? {
                   id: author._id.toString(),
@@ -81,15 +88,20 @@ export const createRecipe = async (
         title,
         description,
         ingredients,
-        instructions,
+        steps,
         authorId,
     } = data;
 
     const recipe = await Recipe.create({
         title,
         description,
+        nutrients: {
+            protein: 50,
+            fat: 130,
+            carbohydrate: 60,
+        },
         ingredients,
-        instructions,
+        steps,
         author: authorId,
     });
 

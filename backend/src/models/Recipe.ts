@@ -1,17 +1,50 @@
-import mongoose, { Schema, Document } from "mongoose";
+import { Schema, Document, model } from "mongoose";
+import type { ObjectId } from "mongoose";
 import { USER_DOCUMENT_NAME } from "./User";
+
+export const AVAILABLE_INGRIDIENT_UNITS = [
+    "г",
+    "кг",
+    "шт",
+] as const;
+
+export const ALTERNATIVE_INGRIDINT_UNIT =
+    "по вкусу" as const;
+
+export type RecipeIngridient =
+    | {
+          name: string;
+          amount: number;
+          unit: (typeof AVAILABLE_INGRIDIENT_UNITS)[number];
+      }
+    | {
+          name: string;
+          amount: typeof ALTERNATIVE_INGRIDINT_UNIT;
+      };
+
+export type RecipeStep = {
+    description: string;
+    duration: `${number} мин` | `${number} сек`;
+};
+
+export type RecipeNutrients = {
+    protein: number;
+    fat: number;
+    carbohydrate: number;
+};
 
 export interface IRecipe extends Document {
     title: string;
     description: string;
-    ingredients: string[];
-    instructions: string;
-    author: mongoose.Types.ObjectId;
+    nutrients: RecipeNutrients;
+    ingredients: RecipeIngridient[];
+    steps: RecipeStep[];
+    author: ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }
 
-const recipeSchema: Schema = new Schema(
+const recipeSchema = new Schema<IRecipe>(
     {
         title: {
             type: String,
@@ -23,8 +56,53 @@ const recipeSchema: Schema = new Schema(
             required: true,
             trim: true,
         },
+        nutrients: {
+            type: {
+                protein: Number,
+                fat: Number,
+                carbohydrate: Number,
+            },
+            required: true,
+        },
         ingredients: {
-            type: [String],
+            type: [
+                {
+                    name: {
+                        type: String,
+                        required: true,
+                    },
+                    amount: {
+                        type: Schema.Types.Mixed,
+                        required: true,
+                        validate: {
+                            validator: function (
+                                v: number | string
+                            ) {
+                                return (
+                                    typeof v === "number" ||
+                                    v === "по вкусу"
+                                );
+                            },
+                            message:
+                                'Amount must be a number or "по вкусу"',
+                        },
+                    },
+                    unit: {
+                        type: String,
+                        enum: [
+                            ...AVAILABLE_INGRIDIENT_UNITS,
+                        ],
+                        required: function (this: {
+                            amount: number | string;
+                        }) {
+                            return (
+                                typeof this.amount ===
+                                "number"
+                            );
+                        },
+                    },
+                },
+            ],
             required: true,
             validate: {
                 validator: (v: string[]) => v.length > 0,
@@ -32,9 +110,20 @@ const recipeSchema: Schema = new Schema(
                     "Recipe must have at least one ingredient",
             },
         },
-        instructions: {
-            type: String,
+        steps: {
+            type: [
+                {
+                    description: String,
+                    duration: String,
+                },
+            ],
             required: true,
+            validate: {
+                validator: (v: RecipeStep[]) =>
+                    v.length > 0,
+                message:
+                    "Recipe must have at least one step",
+            },
         },
         author: {
             type: Schema.Types.ObjectId,
@@ -47,7 +136,9 @@ const recipeSchema: Schema = new Schema(
     }
 );
 
-export default mongoose.model<IRecipe>(
-    "Recipe",
+export const RECIPE_DOCUMENT_NAME = "Recipe";
+
+export default model<IRecipe>(
+    RECIPE_DOCUMENT_NAME,
     recipeSchema
 );

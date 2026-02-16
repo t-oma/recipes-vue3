@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import { Schema, Document, model } from "mongoose";
 
 export interface IUser extends Document {
     email: string;
@@ -8,7 +8,7 @@ export interface IUser extends Document {
     updatedAt: Date;
 }
 
-const userSchema: Schema = new Schema(
+const userSchema = new Schema<IUser>(
     {
         email: {
             type: String,
@@ -35,7 +35,4 @@ const userSchema: Schema = new Schema(
 
 export const USER_DOCUMENT_NAME = "User";
 
-export default mongoose.model<IUser>(
-    USER_DOCUMENT_NAME,
-    userSchema
-);
+export default model<IUser>(USER_DOCUMENT_NAME, userSchema);

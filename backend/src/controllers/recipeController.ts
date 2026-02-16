@@ -37,12 +37,8 @@ export const createRecipe = async (
     next: NextFunction
 ) => {
     try {
-        const {
-            title,
-            description,
-            ingredients,
-            instructions,
-        } = req.body;
+        const { title, description, ingredients, steps } =
+            req.body;
         const userId = req.user?.userId;
 
         if (!userId) {
@@ -58,7 +54,7 @@ export const createRecipe = async (
             ingredients: Array.isArray(ingredients)
                 ? ingredients
                 : [ingredients],
-            instructions,
+            steps,
             authorId: userId,
         });
 
