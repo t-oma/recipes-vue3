@@ -44,6 +44,62 @@ export interface IRecipe extends Document {
     updatedAt: Date;
 }
 
+const nutrientsSchema = new Schema<RecipeNutrients>({
+    protein: {
+        type: Number,
+        required: true,
+    },
+    fat: {
+        type: Number,
+        required: true,
+    },
+    carbohydrate: {
+        type: Number,
+        required: true,
+    },
+});
+
+const ingridientSchema = new Schema<RecipeIngridient>({
+    name: {
+        type: String,
+        required: true,
+    },
+    amount: {
+        type: Schema.Types.Mixed,
+        required: true,
+        validate: {
+            validator: function (v: number | string) {
+                return (
+                    typeof v === "number" ||
+                    v === "по вкусу"
+                );
+            },
+            message:
+                'Amount must be a number or "по вкусу"',
+        },
+    },
+    unit: {
+        type: String,
+        enum: [...AVAILABLE_INGRIDIENT_UNITS],
+        required: function (this: {
+            amount: number | string;
+        }) {
+            return typeof this.amount === "number";
+        },
+    },
+});
+
+const stepSchema = new Schema<RecipeStep>({
+    description: {
+        type: String,
+        required: true,
+    },
+    duration: {
+        type: String,
+        required: true,
+    },
+});
+
 const recipeSchema = new Schema<IRecipe>(
     {
         title: {
@@ -56,53 +112,9 @@ const recipeSchema = new Schema<IRecipe>(
             required: true,
             trim: true,
         },
-        nutrients: {
-            type: {
-                protein: Number,
-                fat: Number,
-                carbohydrate: Number,
-            },
-            required: true,
-        },
+        nutrients: nutrientsSchema,
         ingredients: {
-            type: [
-                {
-                    name: {
-                        type: String,
-                        required: true,
-                    },
-                    amount: {
-                        type: Schema.Types.Mixed,
-                        required: true,
-                        validate: {
-                            validator: function (
-                                v: number | string
-                            ) {
-                                return (
-                                    typeof v === "number" ||
-                                    v === "по вкусу"
-                                );
-                            },
-                            message:
-                                'Amount must be a number or "по вкусу"',
-                        },
-                    },
-                    unit: {
-                        type: String,
-                        enum: [
-                            ...AVAILABLE_INGRIDIENT_UNITS,
-                        ],
-                        required: function (this: {
-                            amount: number | string;
-                        }) {
-                            return (
-                                typeof this.amount ===
-                                "number"
-                            );
-                        },
-                    },
-                },
-            ],
+            type: [ingridientSchema],
             required: true,
             validate: {
                 validator: (v: string[]) => v.length > 0,
@@ -111,12 +123,7 @@ const recipeSchema = new Schema<IRecipe>(
             },
         },
         steps: {
-            type: [
-                {
-                    description: String,
-                    duration: String,
-                },
-            ],
+            type: [stepSchema],
             required: true,
             validate: {
                 validator: (v: RecipeStep[]) =>
@@ -136,7 +143,7 @@ const recipeSchema = new Schema<IRecipe>(
     }
 );
 
-export const RECIPE_DOCUMENT_NAME = "Recipe";
+export const RECIPE_DOCUMENT_NAME = "Recipe" as const;
 
 export default model<IRecipe>(
     RECIPE_DOCUMENT_NAME,
