@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import * as recipeController from "../controllers/recipeController";
 import { authenticate } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -6,13 +7,13 @@ import { createRecipeSchema } from "../schemas/recipe";
 
 const router: Router = Router();
 
-router.get("/", recipeController.getAllRecipes);
-router.get("/:id", recipeController.getRecipeById);
+router.get("/", recipeController.getAll);
+router.get("/:id", recipeController.getById);
 router.post(
     "/",
     authenticate,
     validate(createRecipeSchema),
-    recipeController.createRecipe
+    recipeController.create
 );
 
 export default router;

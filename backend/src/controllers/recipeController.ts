@@ -1,28 +1,28 @@
-import { Request, Response, NextFunction } from "express";
-import * as recipeService from "../services/recipeService";
-import { createError } from "../middleware/errorHandler";
+import { NextFunction, Request, Response } from "express";
+import { createError } from "@/middleware/errorHandler";
+import * as recipeService from "@/services/recipeService";
 
-export const getAllRecipes = async (
+export const getAll = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const recipes = await recipeService.getAllRecipes();
+        const recipes = await recipeService.getAll();
         res.json(recipes);
     } catch (error) {
         next(error);
     }
 };
 
-export const getRecipeById = async (
+export const getById = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
         const { id } = req.params;
-        const recipe = await recipeService.getRecipeById(
+        const recipe = await recipeService.getById(
             id as string
         );
         res.json(recipe);
@@ -31,7 +31,7 @@ export const getRecipeById = async (
     }
 };
 
-export const createRecipe = async (
+export const create = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -48,7 +48,7 @@ export const createRecipe = async (
             );
         }
 
-        const recipe = await recipeService.createRecipe({
+        const recipe = await recipeService.create({
             title,
             description,
             ingredients: Array.isArray(ingredients)

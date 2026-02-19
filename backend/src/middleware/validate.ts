@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+
 import type { ZodType } from "zod/v4";
 
 export const validate = <ZT extends ZodType>(

@@ -1,6 +1,8 @@
-import { Schema, Document, model } from "mongoose";
-import type { ObjectId } from "mongoose";
+import { Document, model, Schema } from "mongoose";
+
 import { USER_DOCUMENT_NAME } from "./User";
+import type { ObjectId } from "mongoose";
+import type { Prettify } from "zod/v4/core/util";
 
 export const AVAILABLE_INGRIDIENT_UNITS = [
     "г",
@@ -11,7 +13,7 @@ export const AVAILABLE_INGRIDIENT_UNITS = [
 export const ALTERNATIVE_INGRIDINT_UNIT =
     "по вкусу" as const;
 
-export type RecipeIngridient =
+export type RecipeIngridient = Prettify<
     | {
           name: string;
           amount: number;
@@ -20,7 +22,8 @@ export type RecipeIngridient =
     | {
           name: string;
           amount: typeof ALTERNATIVE_INGRIDINT_UNIT;
-      };
+      }
+>;
 
 export type RecipeStep = {
     description: string;
@@ -44,61 +47,70 @@ export interface IRecipe extends Document {
     updatedAt: Date;
 }
 
-const nutrientsSchema = new Schema<RecipeNutrients>({
-    protein: {
-        type: Number,
-        required: true,
+const nutrientsSchema = new Schema<RecipeNutrients>(
+    {
+        protein: {
+            type: Number,
+            required: true,
+        },
+        fat: {
+            type: Number,
+            required: true,
+        },
+        carbohydrate: {
+            type: Number,
+            required: true,
+        },
     },
-    fat: {
-        type: Number,
-        required: true,
-    },
-    carbohydrate: {
-        type: Number,
-        required: true,
-    },
-});
+    { _id: false }
+);
 
-const ingridientSchema = new Schema<RecipeIngridient>({
-    name: {
-        type: String,
-        required: true,
-    },
-    amount: {
-        type: Schema.Types.Mixed,
-        required: true,
-        validate: {
-            validator: function (v: number | string) {
-                return (
-                    typeof v === "number" ||
-                    v === "по вкусу"
-                );
+const ingridientSchema = new Schema<RecipeIngridient>(
+    {
+        name: {
+            type: String,
+            required: true,
+        },
+        amount: {
+            type: Schema.Types.Mixed,
+            required: true,
+            validate: {
+                validator: function (v: number | string) {
+                    return (
+                        typeof v === "number" ||
+                        v === "по вкусу"
+                    );
+                },
+                message:
+                    'Amount must be a number or "по вкусу"',
             },
-            message:
-                'Amount must be a number or "по вкусу"',
+        },
+        unit: {
+            type: String,
+            enum: [...AVAILABLE_INGRIDIENT_UNITS],
+            required: function (this: {
+                amount: number | string;
+            }) {
+                return typeof this.amount === "number";
+            },
         },
     },
-    unit: {
-        type: String,
-        enum: [...AVAILABLE_INGRIDIENT_UNITS],
-        required: function (this: {
-            amount: number | string;
-        }) {
-            return typeof this.amount === "number";
-        },
-    },
-});
+    { _id: false }
+);
 
-const stepSchema = new Schema<RecipeStep>({
-    description: {
-        type: String,
-        required: true,
+const stepSchema = new Schema<RecipeStep>(
+    {
+        description: {
+            type: String,
+            required: true,
+        },
+        duration: {
+            type: String,
+            required: true,
+        },
     },
-    duration: {
-        type: String,
-        required: true,
-    },
-});
+    { _id: false }
+);
 
 const recipeSchema = new Schema<IRecipe>(
     {

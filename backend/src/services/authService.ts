@@ -1,10 +1,10 @@
-import User from "../models/User";
-import {
-    hashPassword,
-    comparePassword,
-} from "../utils/password";
-import { generateToken } from "../utils/jwt";
 import { createError } from "../middleware/errorHandler";
+import User from "../models/User";
+import { generateToken } from "../utils/jwt";
+import {
+    comparePassword,
+    hashPassword,
+} from "../utils/password";
 
 export interface RegisterData {
     email: string;

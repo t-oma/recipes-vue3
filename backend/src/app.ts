@@ -1,7 +1,8 @@
-import express from "express";
 import cors from "cors";
-import helmet from "helmet";
 import dotenv from "dotenv";
+import express from "express";
+import helmet from "helmet";
+
 import { connectDatabase } from "./config/database";
 import { errorHandler } from "./middleware/errorHandler";
 import routes from "./routes";
