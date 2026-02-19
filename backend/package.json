@@ -6,7 +6,7 @@
     "scripts": {
         "prepare": "cd .. && husky backend/.husky",
         "dev": "tsx watch src/app.ts",
-        "build": "tsc",
+        "build": "tsc && tsc-alias",
         "start": "node dist/app.js",
         "typecheck": "tsc --noEmit",
         "lint": "eslint src",
@@ -32,10 +32,12 @@
         "helmet": "^8.1.0",
         "jsonwebtoken": "^9.0.3",
         "mongoose": "^8.23.0",
+        "openai": "^6.22.0",
         "zod": "^3.25.76"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
+        "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
         "@types/bcrypt": "^5.0.2",
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.6",
@@ -47,6 +49,7 @@
         "jiti": "^2.6.1",
         "lint-staged": "^16.2.7",
         "prettier": "^3.8.1",
+        "tsc-alias": "^1.8.16",
         "tsx": "^4.21.0",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.55.0"

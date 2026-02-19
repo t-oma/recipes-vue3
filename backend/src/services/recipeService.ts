@@ -1,11 +1,13 @@
-import Recipe, {
-    IRecipe,
-    type RecipeIngridient,
-    type RecipeNutrients,
-    type RecipeStep,
-} from "../models/Recipe";
-import { createError } from "../middleware/errorHandler";
-import { isUser } from "../utils/helpers";
+import { createError } from "@/middleware/errorHandler";
+import Recipe, { IRecipe } from "@/models/Recipe";
+import { isUser } from "@/utils/helpers";
+
+import { calculateNutrients } from "./nutritionService";
+import type {
+    RecipeIngridient,
+    RecipeNutrients,
+    RecipeStep,
+} from "@/models/Recipe";
 
 export interface CreateRecipeData {
     title: string;
@@ -56,7 +58,7 @@ const mapRecipeToResponse = (
     };
 };
 
-export const getAllRecipes = async (): Promise<
+export const getAll = async (): Promise<
     RecipeResponse[]
 > => {
     const recipes = await Recipe.find().populate(
@@ -66,7 +68,7 @@ export const getAllRecipes = async (): Promise<
     return recipes.map(mapRecipeToResponse);
 };
 
-export const getRecipeById = async (
+export const getById = async (
     id: string
 ): Promise<RecipeResponse> => {
     const recipe = await Recipe.findById(id).populate(
@@ -81,7 +83,7 @@ export const getRecipeById = async (
     return mapRecipeToResponse(recipe);
 };
 
-export const createRecipe = async (
+export const create = async (
     data: CreateRecipeData
 ): Promise<RecipeResponse> => {
     const {
@@ -92,14 +94,13 @@ export const createRecipe = async (
         authorId,
     } = data;
 
+    const nutrients = await calculateNutrients(ingredients);
+    console.log(nutrients);
+
     const recipe = await Recipe.create({
         title,
         description,
-        nutrients: {
-            protein: 50,
-            fat: 130,
-            carbohydrate: 60,
-        },
+        nutrients,
         ingredients,
         steps,
         author: authorId,
