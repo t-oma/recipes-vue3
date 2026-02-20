@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
-        "target": "ES2022",
-        "module": "commonjs",
-        "lib": ["ES2022"],
+        "target": "ES2024",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "lib": ["ES2024"],
         "outDir": "./dist",
         "rootDir": "./src",
         "baseUrl": ".",
@@ -10,14 +11,17 @@
             "@/*": ["./src/*"]
         },
         "strict": true,
-        "esModuleInterop": true,
+        "strictNullChecks": true,
+        "noUncheckedIndexedAccess": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
-        "moduleResolution": "node",
+        "moduleDetection": "force",
+        "isolatedModules": true,
         "sourceMap": true,
         "declaration": true,
-        "declarationMap": true
+        "declarationMap": true,
+        "noEmitOnError": true
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "dist"]
