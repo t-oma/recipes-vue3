@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { createError } from "@/middleware/errorHandler";
-import * as recipeService from "@/services/recipeService";
+import { recipeService } from "@/services";
 
 export const getAll = async (
     req: Request,
