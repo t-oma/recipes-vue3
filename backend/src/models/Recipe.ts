@@ -1,8 +1,8 @@
-import { Document, model, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 
 import { USER_DOCUMENT_NAME } from "./User";
 import type { ObjectId } from "mongoose";
-import type { Prettify } from "zod/v4/core/util";
+import type { Prettify } from "@/types/utility";
 
 export const AVAILABLE_INGRIDIENT_UNITS = [
     "г",
@@ -12,6 +12,10 @@ export const AVAILABLE_INGRIDIENT_UNITS = [
 
 export const ALTERNATIVE_INGRIDINT_UNIT =
     "по вкусу" as const;
+
+type MongoID = {
+    _id: Schema.Types.ObjectId;
+};
 
 export type RecipeIngridient = Prettify<
     | {
@@ -25,27 +29,29 @@ export type RecipeIngridient = Prettify<
       }
 >;
 
-export type RecipeStep = {
+export type RecipeStep = Prettify<{
     description: string;
     duration: `${number} мин` | `${number} сек`;
-};
+}>;
 
-export type RecipeNutrients = {
+export type RecipeNutrients = Prettify<{
     protein: number;
     fat: number;
     carbohydrate: number;
-};
+}>;
 
-export interface IRecipe extends Document {
-    title: string;
-    description: string;
-    nutrients: RecipeNutrients;
-    ingredients: RecipeIngridient[];
-    steps: RecipeStep[];
-    author: ObjectId;
-    createdAt: Date;
-    updatedAt: Date;
-}
+export type IRecipe = Prettify<
+    {
+        title: string;
+        description: string;
+        nutrients: RecipeNutrients;
+        ingredients: RecipeIngridient[];
+        steps: RecipeStep[];
+        author: ObjectId;
+        createdAt: Date;
+        updatedAt: Date;
+    } & MongoID
+>;
 
 const nutrientsSchema = new Schema<RecipeNutrients>(
     {
@@ -156,6 +162,12 @@ const recipeSchema = new Schema<IRecipe>(
 );
 
 export const RECIPE_DOCUMENT_NAME = "Recipe" as const;
+
+export function ToObjectId(
+    id: string
+): Schema.Types.ObjectId {
+    return id as unknown as Schema.Types.ObjectId;
+}
 
 export default model<IRecipe>(
     RECIPE_DOCUMENT_NAME,
