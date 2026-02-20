@@ -1,5 +1,9 @@
+import { isObjectIdOrHexString } from "mongoose";
 import { createError } from "@/middleware/errorHandler";
-import Recipe, { IRecipe } from "@/models/Recipe";
+import Recipe, {
+    IRecipe,
+    ToObjectId,
+} from "@/models/Recipe";
 import { isUser } from "@/utils/helpers";
 
 import { calculateNutrients } from "./nutritionService";
@@ -61,10 +65,9 @@ const mapRecipeToResponse = (
 export const getAll = async (): Promise<
     RecipeResponse[]
 > => {
-    const recipes = await Recipe.find().populate(
-        "author",
-        "name"
-    );
+    const recipes = await Recipe.find()
+        .populate("author", "name")
+        .sort({ updatedAt: -1 });
     return recipes.map(mapRecipeToResponse);
 };
 
@@ -94,16 +97,41 @@ export const create = async (
         authorId,
     } = data;
 
-    const nutrients = await calculateNutrients(ingredients);
-    console.log(nutrients);
+    if (!isObjectIdOrHexString(authorId)) {
+        throw createError(
+            `Wrong authorID: ${authorId}`,
+            400
+        );
+    }
 
     const recipe = await Recipe.create({
         title,
         description,
-        nutrients,
+        nutrients: {
+            protein: 0,
+            fat: 0,
+            carbohydrate: 0,
+        },
         ingredients,
         steps,
-        author: authorId,
+        author: ToObjectId(authorId),
+    });
+
+    setImmediate(async () => {
+        try {
+            const nutrients =
+                await calculateNutrients(ingredients);
+            if (nutrients) {
+                await Recipe.findByIdAndUpdate(recipe._id, {
+                    nutrients,
+                });
+            }
+        } catch (error) {
+            console.error(
+                "Failed to calculate nutrients:",
+                error
+            );
+        }
     });
 
     const populatedRecipe = await Recipe.findById(
