@@ -3,7 +3,7 @@ import type {
     RecipeIngridient,
     RecipeNutrients,
     RecipeStep,
-} from "@/models/Recipe";
+} from "@/repositories/models/Recipe";
 
 export interface CreateRecipeData {
     title: string;

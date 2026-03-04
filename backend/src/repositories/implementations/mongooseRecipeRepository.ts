@@ -1,4 +1,6 @@
-import Recipe, { ToObjectId } from "@/models/Recipe";
+import Recipe, {
+    ToObjectId,
+} from "@/repositories/models/Recipe";
 
 import type {
     CreateRecipeData,

@@ -3,6 +3,7 @@ import { model, Schema } from "mongoose";
 import { USER_DOCUMENT_NAME } from "./User";
 import type { ObjectId } from "mongoose";
 import type { Prettify } from "@/types/utility";
+import type { MongoID } from ".";
 
 export const AVAILABLE_INGRIDIENT_UNITS = [
     "г",
@@ -12,10 +13,6 @@ export const AVAILABLE_INGRIDIENT_UNITS = [
 
 export const ALTERNATIVE_INGRIDINT_UNIT =
     "по вкусу" as const;
-
-type MongoID = {
-    _id: Schema.Types.ObjectId;
-};
 
 export type RecipeIngridient = Prettify<
     | {
