@@ -1,18 +1,15 @@
 import { isObjectIdOrHexString } from "mongoose";
+import { z } from "zod/v4";
 import { createError } from "@/middleware/errorHandler";
 import { isUser } from "@/utils/helpers";
 
-import { calculateNutrients } from "./nutritionService";
+import type { IRecipeRepository } from "@/repositories";
 import type {
     IRecipe,
     RecipeIngridient,
     RecipeNutrients,
     RecipeStep,
-} from "@/models/Recipe";
-import type {
-    IRecipeRepository,
-    CreateRecipeData as RepoCreateRecipeData,
-} from "@/repositories";
+} from "@/repositories/models/Recipe";
 
 export interface CreateRecipeData {
     title: string;
@@ -63,8 +60,23 @@ const mapRecipeToResponse = (
     };
 };
 
+export const nutrientsSchema = z.object({
+    protein: z.number(),
+    fat: z.number(),
+    carbohydrate: z.number(),
+});
+
+export type Nutrients = z.infer<typeof nutrientsSchema>;
+
+export type RecipeService = ReturnType<
+    typeof createRecipeService
+>;
+
 export const createRecipeService = (
-    repo: IRecipeRepository
+    repo: IRecipeRepository,
+    calculateNutrients: (
+        ingridients: RecipeIngridient[]
+    ) => Promise<Nutrients | null>
 ) => ({
     getAll: async (): Promise<RecipeResponse[]> => {
         const recipes = await repo.findAllWithAuthor();
@@ -101,7 +113,7 @@ export const createRecipeService = (
             );
         }
 
-        const recipeData: RepoCreateRecipeData = {
+        const recipe = await repo.create({
             title,
             description,
             nutrients: {
@@ -112,9 +124,7 @@ export const createRecipeService = (
             ingredients,
             steps,
             author: authorId,
-        };
-
-        const recipe = await repo.create(recipeData);
+        });
 
         setImmediate(async () => {
             try {
