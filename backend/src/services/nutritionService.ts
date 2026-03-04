@@ -1,16 +1,9 @@
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
-import { z } from "zod/v4";
 
-import type { RecipeIngridient } from "@/models/Recipe";
-
-const nutrientsSchema = z.object({
-    protein: z.number(),
-    fat: z.number(),
-    carbohydrate: z.number(),
-});
-
-type Nutrients = z.infer<typeof nutrientsSchema>;
+import { nutrientsSchema } from "./recipeService";
+import type { RecipeIngridient } from "@/repositories/models/Recipe";
+import type { Nutrients } from "./recipeService";
 
 export const calculateNutrients = async (
     ingridients: RecipeIngridient[]

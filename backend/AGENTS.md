@@ -53,14 +53,14 @@ import { createError } from "@/middleware/errorHandler";
 
 ### Naming Conventions
 
-| Element                | Convention           | Example                |
-| ---------------------- | -------------------- | ---------------------- |
-| Files                  | camelCase            | `recipeService.ts`     |
-| Classes/Models         | PascalCase           | `Recipe`, `User`       |
-| Interfaces (documents) | `I` prefix           | `IRecipe`, `IUser`     |
-| Type aliases           | PascalCase           | `RecipeResponse`       |
-| Functions              | camelCase            | `getAll`, `getById`    |
-| Constants              | SCREAMING_SNAKE_CASE | `RECIPE_DOCUMENT_NAME` |
+| Element        | Convention           | Example                                 |
+| -------------- | -------------------- | --------------------------------------- |
+| Files          | camelCase            | `recipeService.ts`                      |
+| Classes/Models | PascalCase           | `Recipe`, `User`                        |
+| Interfaces     | `I` prefix           | `IRecipe`, `IUser`, `IRecipeRepository` |
+| Type aliases   | PascalCase           | `RecipeResponse`                        |
+| Functions      | camelCase            | `getAll`, `getById`                     |
+| Constants      | SCREAMING_SNAKE_CASE | `RECIPE_DOCUMENT_NAME`                  |
 
 ### Error Handling
 
@@ -103,20 +103,58 @@ export const createRecipeSchema = z.object({
 
 Export const functions with explicit `: void` return type. Call `next()` on success or send response on error.
 
-### Service Layer
+### Architecture: Repository Pattern + DI
 
-Export async functions with explicit return types and response interfaces:
+Services use dependency injection via factory functions. Repositories abstract database access.
+
+**Repository interface** (`src/repositories/interfaces/`):
 
 ```typescript
-export interface RecipeResponse {
-    id: string;
-    title: string;
+export interface IRecipeRepository {
+    findAllWithAuthor(): Promise<IRecipe[]>;
+    findByIdWithAuthor(id: string): Promise<IRecipe | null>;
+    create(data: CreateRecipeData): Promise<IRecipe>;
 }
-export const getById = async (
-    id: string
-): Promise<RecipeResponse> => {
-    /* ... */
-};
+```
+
+**Repository implementation** (factory function):
+
+```typescript
+export const createMongooseRecipeRepository =
+    (): IRecipeRepository => ({
+        findAllWithAuthor: async () =>
+            Recipe.find().populate("author", "name"),
+        // ...
+    });
+```
+
+**Service** (factory function with DI):
+
+```typescript
+export const createRecipeService = (
+    recipeRepo: IRecipeRepository
+) => ({
+    getAll: async (): Promise<RecipeResponse[]> => {
+        const recipes =
+            await recipeRepo.findAllWithAuthor();
+        return recipes.map(mapRecipeToResponse);
+    },
+});
+```
+
+**Initialization** (`src/services/index.ts`):
+
+```typescript
+const recipeRepo = createMongooseRecipeRepository();
+export const recipeService =
+    createRecipeService(recipeRepo);
+```
+
+**For testing**, pass mock repositories:
+
+```typescript
+const mockRepo = { findAllWithAuthor: jest.fn() };
+const service = createRecipeService(mockRepo);
 ```
 
 ### Database Models
@@ -157,9 +195,13 @@ src/
 ├── controllers/        # Route handlers
 ├── middleware/         # auth, validate, errorHandler
 ├── models/             # Mongoose models and types
+├── repositories/       # Repository layer
+│   ├── interfaces/     # Repository interfaces
+│   └── implementations/# Mongoose implementations
 ├── routes/             # Express routers
 ├── schemas/            # Zod validation schemas
 ├── services/           # Business logic layer
+│   └── index.ts        # Initialized services
 ├── types/              # TypeScript type definitions
 └── utils/              # Utility functions
 ```

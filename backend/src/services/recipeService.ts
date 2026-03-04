@@ -1,17 +1,15 @@
 import { isObjectIdOrHexString } from "mongoose";
+import { z } from "zod/v4";
 import { createError } from "@/middleware/errorHandler";
-import Recipe, {
-    IRecipe,
-    ToObjectId,
-} from "@/models/Recipe";
 import { isUser } from "@/utils/helpers";
 
-import { calculateNutrients } from "./nutritionService";
+import type { IRecipeRepository } from "@/repositories";
 import type {
+    IRecipe,
     RecipeIngridient,
     RecipeNutrients,
     RecipeStep,
-} from "@/models/Recipe";
+} from "@/repositories/models/Recipe";
 
 export interface CreateRecipeData {
     title: string;
@@ -62,85 +60,102 @@ const mapRecipeToResponse = (
     };
 };
 
-export const getAll = async (): Promise<
-    RecipeResponse[]
-> => {
-    const recipes = await Recipe.find()
-        .populate("author", "name")
-        .sort({ updatedAt: -1 });
-    return recipes.map(mapRecipeToResponse);
-};
+export const nutrientsSchema = z.object({
+    protein: z.number(),
+    fat: z.number(),
+    carbohydrate: z.number(),
+});
 
-export const getById = async (
-    id: string
-): Promise<RecipeResponse> => {
-    const recipe = await Recipe.findById(id).populate(
-        "author",
-        "name"
-    );
+export type Nutrients = z.infer<typeof nutrientsSchema>;
 
-    if (!recipe) {
-        throw createError("Recipe not found", 404);
-    }
+export type RecipeService = ReturnType<
+    typeof createRecipeService
+>;
 
-    return mapRecipeToResponse(recipe);
-};
+export const createRecipeService = (
+    repo: IRecipeRepository,
+    calculateNutrients: (
+        ingridients: RecipeIngridient[]
+    ) => Promise<Nutrients | null>
+) => ({
+    getAll: async (): Promise<RecipeResponse[]> => {
+        const recipes = await repo.findAllWithAuthor();
+        return recipes.map(mapRecipeToResponse);
+    },
 
-export const create = async (
-    data: CreateRecipeData
-): Promise<RecipeResponse> => {
-    const {
-        title,
-        description,
-        ingredients,
-        steps,
-        authorId,
-    } = data;
+    getById: async (
+        id: string
+    ): Promise<RecipeResponse> => {
+        const recipe = await repo.findByIdWithAuthor(id);
 
-    if (!isObjectIdOrHexString(authorId)) {
-        throw createError(
-            `Wrong authorID: ${authorId}`,
-            400
-        );
-    }
+        if (!recipe) {
+            throw createError("Recipe not found", 404);
+        }
 
-    const recipe = await Recipe.create({
-        title,
-        description,
-        nutrients: {
-            protein: 0,
-            fat: 0,
-            carbohydrate: 0,
-        },
-        ingredients,
-        steps,
-        author: ToObjectId(authorId),
-    });
+        return mapRecipeToResponse(recipe);
+    },
 
-    setImmediate(async () => {
-        try {
-            const nutrients =
-                await calculateNutrients(ingredients);
-            if (nutrients) {
-                await Recipe.findByIdAndUpdate(recipe._id, {
-                    nutrients,
-                });
-            }
-        } catch (error) {
-            console.error(
-                "Failed to calculate nutrients:",
-                error
+    create: async (
+        data: CreateRecipeData
+    ): Promise<RecipeResponse> => {
+        const {
+            title,
+            description,
+            ingredients,
+            steps,
+            authorId,
+        } = data;
+
+        if (!isObjectIdOrHexString(authorId)) {
+            throw createError(
+                `Wrong authorID: ${authorId}`,
+                400
             );
         }
-    });
 
-    const populatedRecipe = await Recipe.findById(
-        recipe._id
-    ).populate("author", "name");
+        const recipe = await repo.create({
+            title,
+            description,
+            nutrients: {
+                protein: 0,
+                fat: 0,
+                carbohydrate: 0,
+            },
+            ingredients,
+            steps,
+            author: authorId,
+        });
 
-    if (!populatedRecipe) {
-        throw createError("Failed to create recipe", 500);
-    }
+        setImmediate(async () => {
+            try {
+                const nutrients =
+                    await calculateNutrients(ingredients);
+                if (nutrients) {
+                    await repo.updateById(
+                        recipe._id.toString(),
+                        { nutrients }
+                    );
+                }
+            } catch (error) {
+                console.error(
+                    "Failed to calculate nutrients:",
+                    error
+                );
+            }
+        });
 
-    return mapRecipeToResponse(populatedRecipe);
-};
+        const populatedRecipe =
+            await repo.findByIdWithAuthor(
+                recipe._id.toString()
+            );
+
+        if (!populatedRecipe) {
+            throw createError(
+                "Failed to create recipe",
+                500
+            );
+        }
+
+        return mapRecipeToResponse(populatedRecipe);
+    },
+});

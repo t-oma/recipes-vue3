@@ -1,12 +1,17 @@
-import { Document, model, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 
-export interface IUser extends Document {
-    email: string;
-    password: string;
-    name: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import type { Prettify } from "@/types/utility";
+import type { MongoID } from ".";
+
+export type IUser = Prettify<
+    {
+        email: string;
+        password: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+    } & MongoID
+>;
 
 const userSchema = new Schema<IUser>(
     {

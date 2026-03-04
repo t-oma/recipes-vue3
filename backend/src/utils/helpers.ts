@@ -1,4 +1,4 @@
-import type { IUser } from "../models/User";
+import type { IUser } from "../repositories/models/User";
 
 export function isUser(author: unknown): author is IUser {
     return (
