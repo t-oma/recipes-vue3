@@ -1,39 +1,44 @@
 import { NextFunction, Request, Response } from "express";
-import { authService } from "@/services";
 
-export const register = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const { email, password, name } = req.body;
+import type { AuthService } from "@/services/authService";
 
-        const result = await authService.register({
-            email,
-            password,
-            name,
-        });
-        res.status(201).json(result);
-    } catch (error) {
-        next(error);
-    }
-};
+export const createAuthController = (
+    authService: AuthService
+) => ({
+    register: async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+            const { email, password, name } = req.body;
 
-export const login = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const { email, password } = req.body;
+            const result = await authService.register({
+                email,
+                password,
+                name,
+            });
+            res.status(201).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-        const result = await authService.login({
-            email,
-            password,
-        });
-        res.json(result);
-    } catch (error) {
-        next(error);
-    }
-};
+    login: async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+            const { email, password } = req.body;
+
+            const result = await authService.login({
+                email,
+                password,
+            });
+            res.json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
+});

@@ -1,6 +1,6 @@
 import { Router } from "express";
+import { recipeController } from "@/controllers";
 
-import * as recipeController from "../controllers/recipeController";
 import { authenticate } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { createRecipeSchema } from "../schemas/recipe";
