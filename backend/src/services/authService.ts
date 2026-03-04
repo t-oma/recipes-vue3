@@ -6,6 +6,8 @@ import {
 } from "@/utils/password";
 
 import type { IUserRepository } from "@/repositories/interfaces/IUserRepository";
+import type { IUser } from "@/repositories/models/User";
+import type { Prettify } from "@/types/utility";
 
 export interface RegisterData {
     email: string;
@@ -20,12 +22,14 @@ export interface LoginData {
 
 export interface AuthResponse {
     token: string;
-    user: {
-        id: string;
-        email: string;
-        name: string;
-    };
+    user: Prettify<
+        Pick<IUser, "email" | "name"> & { id: string }
+    >;
 }
+
+export type AuthService = ReturnType<
+    typeof createAuthService
+>;
 
 export const createAuthService = (
     userRepo: IUserRepository
