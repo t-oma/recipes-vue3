@@ -2,19 +2,26 @@ import { z } from "zod/v4";
 
 const schema = z.object({
     order: z.number().positive(),
-    durationSec: z.number().positive(),
+    durationSec: z.templateLiteral([
+        z.number(),
+        z.enum([" мин", " сек"]),
+    ]),
     description: z.string().trim().max(1000).min(3),
 });
 
 export type Props = z.infer<typeof schema>;
 
 export class Step {
-    private constructor(private readonly props: Props) {}
+    private _props: Props;
+
+    private constructor(props: Props) {
+        this._props = props;
+    }
 
     static from(input: {
-        order: number;
-        durationSec: number;
-        description: string;
+        order: Props["order"];
+        durationSec: Props["durationSec"];
+        description: Props["description"];
     }) {
         const result = schema.safeParse(input);
         if (!result.success) {
@@ -25,14 +32,14 @@ export class Step {
     }
 
     get order() {
-        return this.props.order;
+        return this._props.order;
     }
 
     get durationSec() {
-        return this.props.durationSec;
+        return this._props.durationSec;
     }
 
     get description() {
-        return this.props.description;
+        return this._props.description;
     }
 }

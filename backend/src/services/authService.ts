@@ -5,9 +5,9 @@ import {
     hashPassword,
 } from "@/utils/password";
 
+import type { IUser } from "@/adapter/out/mongo/models/UserModel";
 import type { IUserRepository } from "@/repositories/interfaces/IUserRepository";
-import type { IUser } from "@/repositories/models/User";
-import type { Prettify } from "@/types/utility";
+import type { Prettify } from "@/shared/types/utility";
 
 export interface RegisterData {
     email: string;

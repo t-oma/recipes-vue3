@@ -10,7 +10,7 @@ import routes from "./routes";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env["PORT"] || 3000;
 
 app.use(helmet());
 app.use(cors());
@@ -24,8 +24,8 @@ app.use(errorHandler);
 const startServer = async () => {
     try {
         if (
-            !process.env.JWT_SECRET ||
-            process.env.JWT_SECRET.trim() === ""
+            !process.env["JWT_SECRET"] ||
+            process.env["JWT_SECRET"].trim() === ""
         ) {
             throw new Error("JWT_SECRET not set!");
         }
@@ -35,7 +35,7 @@ const startServer = async () => {
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);
             console.log(
-                `Environment: ${process.env.NODE_ENV}`
+                `Environment: ${process.env["NODE_ENV"]}`
             );
         });
     } catch (error) {

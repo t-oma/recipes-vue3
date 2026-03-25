@@ -1,4 +1,4 @@
-import { createMongooseRecipeRepository } from "@/repositories/implementations/mongooseRecipeRepository";
+import { createRecipeRepository } from "@/adapter/out/mongo/recipeRepository";
 import { createMongooseUserRepository } from "@/repositories/implementations/mongooseUserRepository";
 
 import { createAuthService } from "./authService";
@@ -6,7 +6,7 @@ import { calculateNutrients } from "./nutritionService";
 import { createRecipeService } from "./recipeService";
 
 const userRepo = createMongooseUserRepository();
-const recipeRepo = createMongooseRecipeRepository();
+const recipeRepo = createRecipeRepository();
 
 export const authService = createAuthService(userRepo);
 export const recipeService = createRecipeService(

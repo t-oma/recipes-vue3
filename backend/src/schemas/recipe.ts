@@ -3,7 +3,7 @@ import * as z from "zod/v4";
 import {
     ALTERNATIVE_INGRIDINT_UNIT,
     AVAILABLE_INGRIDIENT_UNITS,
-} from "../repositories/models/Recipe";
+} from "../adapter/out/mongo/models/RecipeModel";
 
 export const createRecipeSchema = z.object({
     title: z

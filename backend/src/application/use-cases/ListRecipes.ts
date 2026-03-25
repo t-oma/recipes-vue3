@@ -1,4 +1,4 @@
-import type { UseCase } from "@/shared/use-case";
+import type { UseCase } from "@/shared/types/use-case";
 import type { IRecipeRepository } from "../../domain";
 import type { RecipeDTO } from "../dtos/RecipeDTO";
 

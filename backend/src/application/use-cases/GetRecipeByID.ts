@@ -1,4 +1,4 @@
-import type { UseCase } from "@/shared/use-case";
+import type { UseCase } from "@/shared/types/use-case";
 import type { IRecipeRepository } from "../../domain";
 import type { RecipeDTO } from "../dtos/RecipeDTO";
 
@@ -17,7 +17,9 @@ export class GetRecipeByID implements UseCase<
     async execute(
         input: GetRecipeByIDInput
     ): Promise<RecipeDTO> {
-        const recipe = await this.recipes.getById(input.id);
+        const recipe = await this.recipes.findById(
+            input.id
+        );
 
         if (!recipe) {
             throw new Error("Recipe not found");

@@ -3,13 +3,13 @@ import { z } from "zod/v4";
 import { createError } from "@/middleware/errorHandler";
 import { isUser } from "@/utils/helpers";
 
-import type { IRecipeRepository } from "@/repositories";
 import type {
     IRecipe,
     RecipeIngridient,
     RecipeNutrients,
     RecipeStep,
-} from "@/repositories/models/Recipe";
+} from "@/adapter/out/mongo/models/RecipeModel";
+import type { IRecipeRepository } from "@/repositories";
 
 export interface CreateRecipeData {
     title: string;
@@ -37,7 +37,7 @@ export interface RecipeResponse {
 const mapRecipeToResponse = (
     recipe: IRecipe
 ): RecipeResponse => {
-    const author = recipe.author;
+    const author = recipe.authorId;
 
     return {
         id: recipe._id.toString(),

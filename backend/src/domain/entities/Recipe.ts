@@ -17,7 +17,11 @@ export interface IRecipe {
 }
 
 export class Recipe {
-    constructor(private props: IRecipe) {
+    private _props: IRecipe;
+
+    constructor(props: IRecipe) {
+        this._props = props;
+
         this.ensureInvariants();
     }
 
@@ -74,67 +78,67 @@ export class Recipe {
     }
 
     get id() {
-        return this.props.id;
+        return this._props.id;
     }
 
     get authorId() {
-        return this.props.authorId;
+        return this._props.authorId;
     }
 
     get title() {
-        return this.props.title;
+        return this._props.title;
     }
 
     get description() {
-        return this.props.description;
+        return this._props.description;
     }
 
     get ingredients() {
-        return this.props.ingredients;
+        return this._props.ingredients;
     }
 
     get steps() {
-        return this.props.steps;
+        return this._props.steps;
     }
 
     get createdAt() {
-        return this.props.createdAt;
+        return this._props.createdAt;
     }
 
     get updatedAt() {
-        return this.props.updatedAt;
+        return this._props.updatedAt;
     }
 
     toPrimitives() {
         return {
-            id: this.props.id.value,
-            authorId: this.props.authorId.value,
-            title: this.props.title.value,
-            description: this.props.description.value,
-            ingredients: this.props.ingredients.map(
+            id: this._props.id.value,
+            authorId: this._props.authorId.value,
+            title: this._props.title.value,
+            description: this._props.description.value,
+            ingredients: this._props.ingredients.map(
                 (i) => ({
-                    title: i.title,
+                    name: i.name,
                     amount: i.amount,
-                    units: i.units as string,
+                    units: i.units,
                 })
             ),
-            steps: this.props.steps.map((s) => ({
+            steps: this._props.steps.map((s) => ({
                 order: s.order,
                 durationSec: s.durationSec,
                 description: s.description,
             })),
-            createdAt: this.props.createdAt,
-            updatedAt: this.props.updatedAt,
+            createdAt: this._props.createdAt,
+            updatedAt: this._props.updatedAt,
         };
     }
 
     private ensureInvariants() {
-        if (this.props.ingredients.length === 0) {
+        if (this._props.ingredients.length === 0) {
             throw new Error(
                 "Recipe must have at least one ingredient"
             );
         }
-        if (this.props.steps.length === 0) {
+        if (this._props.steps.length === 0) {
             throw new Error(
                 "Recipe must have at least one step"
             );

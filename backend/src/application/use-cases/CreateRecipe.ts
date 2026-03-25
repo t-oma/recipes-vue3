@@ -6,9 +6,10 @@ import {
     RecipeIngredient,
     RecipeStep,
     RecipeTitle,
-} from "../../domain";
-import type { UseCase } from "@/shared/use-case";
-import type { IRecipeRepository } from "../../domain/ports/RecipeReposotory";
+} from "@/domain";
+
+import type { IRecipeRepository } from "@/domain/ports/RecipeReposotory";
+import type { UseCase } from "@/shared/types/use-case";
 import type {
     IngredientDTO,
     RecipeDTO,

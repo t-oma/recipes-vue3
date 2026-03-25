@@ -2,7 +2,7 @@ import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 
 import { nutrientsSchema } from "./recipeService";
-import type { RecipeIngridient } from "@/repositories/models/Recipe";
+import type { RecipeIngridient } from "@/adapter/out/mongo/models/RecipeModel";
 import type { Nutrients } from "./recipeService";
 
 export const calculateNutrients = async (
@@ -16,7 +16,7 @@ export const calculateNutrients = async (
         .map((i) => {
             if (i.amount === "по вкусу")
                 return `${i.name} - по вкусу`;
-            return `${i.name} - ${i.amount}${i.unit}`;
+            return `${i.name} - ${i.amount}${i.units}`;
         })
         .join("\n");
 

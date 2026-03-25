@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { recipeController } from "@/controllers";
+import { recipeController } from "@/adapter/in/controllers";
 
 import { authenticate } from "../middleware/auth";
 import { validate } from "../middleware/validate";

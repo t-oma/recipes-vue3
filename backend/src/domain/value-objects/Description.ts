@@ -3,7 +3,11 @@ import { z } from "zod/v4";
 const schema = z.string().trim().max(2000);
 
 export class Description {
-    private constructor(public readonly value: string) {}
+    private _value: string;
+
+    private constructor(value: string) {
+        this._value = value;
+    }
 
     static from(value: string) {
         const result = schema.safeParse(value);
@@ -12,5 +16,9 @@ export class Description {
         }
 
         return new Description(result.data);
+    }
+
+    get value() {
+        return this._value;
     }
 }

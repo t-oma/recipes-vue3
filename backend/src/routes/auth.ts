@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authController } from "@/controllers";
+import { authController } from "@/adapter/in/controllers";
 
 import { validate } from "../middleware/validate";
 import {
