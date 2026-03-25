@@ -1,8 +1,8 @@
 import { createRecipeRepository } from "@/adapter/out/mongo/recipeRepository";
 import { createMongooseUserRepository } from "@/repositories/implementations/mongooseUserRepository";
 
+import { calculateNutrients } from "../application/nutritionService";
 import { createAuthService } from "./authService";
-import { calculateNutrients } from "./nutritionService";
 import { createRecipeService } from "./recipeService";
 
 const userRepo = createMongooseUserRepository();

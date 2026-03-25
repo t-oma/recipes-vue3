@@ -5,14 +5,18 @@ import type { RecipeDTO } from "../dtos/RecipeDTO";
 export type GetRecipeByIDInput = {
     id: string;
 };
-
-export class GetRecipeByID implements UseCase<
+export type GetRecipeByIDOutput = RecipeDTO;
+export type GetRecipeByIDUseCase = UseCase<
     GetRecipeByIDInput,
-    RecipeDTO
-> {
-    constructor(
-        private readonly recipes: IRecipeRepository
-    ) {}
+    GetRecipeByIDOutput
+>;
+
+export class GetRecipeByID implements GetRecipeByIDUseCase {
+    private readonly recipes: IRecipeRepository;
+
+    constructor(recipes: IRecipeRepository) {
+        this.recipes = recipes;
+    }
 
     async execute(
         input: GetRecipeByIDInput

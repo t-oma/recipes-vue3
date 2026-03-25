@@ -1,9 +1,4 @@
-import * as z from "zod/v4";
-
-import {
-    ALTERNATIVE_INGRIDINT_UNIT,
-    AVAILABLE_INGRIDIENT_UNITS,
-} from "../adapter/out/mongo/models/RecipeModel";
+import z from "zod/v4";
 
 export const createRecipeSchema = z.object({
     title: z
@@ -20,19 +15,11 @@ export const createRecipeSchema = z.object({
             error: "Too long!",
         }),
     ingredients: z
-        .union([
-            z.object({
-                name: z.string(),
-                amount: z.number(),
-                unit: z.literal(AVAILABLE_INGRIDIENT_UNITS),
-            }),
-            z.object({
-                name: z.string(),
-                amount: z.literal(
-                    ALTERNATIVE_INGRIDINT_UNIT
-                ),
-            }),
-        ])
+        .object({
+            name: z.string(),
+            amount: z.number(),
+            unit: z.string(),
+        })
         .array()
         .refine((val) => val.length < 100, {
             error: "Too many items!",

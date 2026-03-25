@@ -33,7 +33,7 @@ export const createRecipeRepository =
                     steps: m.steps.map((s) =>
                         RecipeStep.from({
                             order: s.order,
-                            durationSec: s.duration,
+                            duration: s.duration,
                             description: s.description,
                         })
                     ),
@@ -65,7 +65,7 @@ export const createRecipeRepository =
                 (s) => {
                     return RecipeStep.from({
                         order: s.order,
-                        durationSec: s.duration,
+                        duration: s.duration,
                         description: s.description,
                     });
                 }
@@ -101,7 +101,7 @@ export const createRecipeRepository =
                 (s) => {
                     return RecipeStep.from({
                         order: s.order,
-                        durationSec: s.duration,
+                        duration: s.duration,
                         description: s.description,
                     });
                 }
@@ -144,7 +144,7 @@ export const createRecipeRepository =
                 (s) => {
                     return RecipeStep.from({
                         order: s.order,
-                        durationSec: s.duration,
+                        duration: s.duration,
                         description: s.description,
                     });
                 }

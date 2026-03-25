@@ -1,4 +1,4 @@
-import type { IUser } from "@/repositories/models/User";
+import type { IUser } from "@/adapter/out/mongo/models/UserModel";
 
 export interface CreateUserData {
     email: string;

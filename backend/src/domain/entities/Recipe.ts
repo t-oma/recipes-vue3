@@ -1,6 +1,7 @@
 import { AuthorId } from "../value-objects/AuthorId";
 import { Description } from "../value-objects/Description";
 import { Ingredient } from "../value-objects/Ingredient";
+import { Nutrients } from "../value-objects/Nutrients";
 import { RecipeId } from "../value-objects/RecipeId";
 import { Step } from "../value-objects/Step";
 import { Title } from "../value-objects/Title";
@@ -10,6 +11,7 @@ export interface IRecipe {
     authorId: AuthorId;
     title: Title;
     description: Description;
+    nutrients: Nutrients;
     ingredients: Ingredient[];
     steps: Step[];
     createdAt: Date;
@@ -30,6 +32,7 @@ export class Recipe {
         authorId: AuthorId;
         title: Title;
         description: Description;
+        nutrients: Nutrients;
         ingredients: Ingredient[];
         steps: Omit<Step, "order">[];
     }) {
@@ -38,7 +41,7 @@ export class Recipe {
             (step, index) =>
                 Step.from({
                     order: index + 1,
-                    durationSec: step.durationSec,
+                    duration: step.duration,
                     description: step.description,
                 })
         );
@@ -48,6 +51,7 @@ export class Recipe {
             authorId: input.authorId,
             title: input.title,
             description: input.description,
+            nutrients: input.nutrients,
             ingredients: input.ingredients,
             steps,
             createdAt: now,
@@ -60,6 +64,7 @@ export class Recipe {
         authorId: string;
         title: string;
         description: string;
+        nutrients: Nutrients;
         ingredients: Ingredient[];
         steps: Step[];
         createdAt: Date | string;
@@ -70,6 +75,7 @@ export class Recipe {
             authorId: AuthorId.from(p.authorId),
             title: Title.from(p.title),
             description: Description.from(p.description),
+            nutrients: Nutrients.from(p.nutrients),
             ingredients: p.ingredients,
             steps: p.steps,
             createdAt: new Date(p.createdAt),
@@ -124,7 +130,7 @@ export class Recipe {
             ),
             steps: this._props.steps.map((s) => ({
                 order: s.order,
-                durationSec: s.durationSec,
+                duration: s.duration,
                 description: s.description,
             })),
             createdAt: this._props.createdAt,

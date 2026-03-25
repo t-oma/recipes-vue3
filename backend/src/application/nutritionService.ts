@@ -1,15 +1,17 @@
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 
-import { nutrientsSchema } from "./recipeService";
+import { nutrientsSchema } from "../services/recipeService";
 import type { RecipeIngridient } from "@/adapter/out/mongo/models/RecipeModel";
-import type { Nutrients } from "./recipeService";
+import type { Nutrients } from "../services/recipeService";
 
-export const calculateNutrients = async (
+export type CalculateNutrients = typeof calculateNutrients;
+
+export async function calculateNutrients(
     ingridients: RecipeIngridient[]
-): Promise<Nutrients | null> => {
+): Promise<Nutrients | null> {
     const client = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
+        apiKey: process.env["OPENAI_API_KEY"],
     });
 
     const ingredientsList = ingridients
@@ -43,4 +45,4 @@ export const calculateNutrients = async (
     });
 
     return response.output_parsed;
-};
+}

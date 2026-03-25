@@ -1,4 +1,4 @@
-import User from "@/repositories/models/User";
+import User from "@/adapter/out/mongo/models/UserModel";
 
 import type {
     CreateUserData,

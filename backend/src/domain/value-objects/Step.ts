@@ -2,7 +2,7 @@ import { z } from "zod/v4";
 
 const schema = z.object({
     order: z.number().positive(),
-    durationSec: z.templateLiteral([
+    duration: z.templateLiteral([
         z.number(),
         z.enum([" мин", " сек"]),
     ]),
@@ -20,7 +20,7 @@ export class Step {
 
     static from(input: {
         order: Props["order"];
-        durationSec: Props["durationSec"];
+        duration: Props["duration"];
         description: Props["description"];
     }) {
         const result = schema.safeParse(input);
@@ -35,8 +35,8 @@ export class Step {
         return this._props.order;
     }
 
-    get durationSec() {
-        return this._props.durationSec;
+    get duration() {
+        return this._props.duration;
     }
 
     get description() {

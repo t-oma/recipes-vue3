@@ -1,7 +1,7 @@
 import { authService, recipeService } from "@/services";
 
 import { createAuthController } from "./authController";
-import { createRecipeController } from "./recipeController";
+import { createRecipeController } from "./recipe";
 
 export const authController =
     createAuthController(authService);

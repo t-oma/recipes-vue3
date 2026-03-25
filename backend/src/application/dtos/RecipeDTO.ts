@@ -10,13 +10,13 @@ export type RecipeDTO = {
 };
 
 export type IngredientDTO = {
-    title: string;
-    amount: number;
+    name: string;
+    amount: number | "по вкусу";
     units: string;
 };
 
 export type StepDTO = {
     order: number;
-    durationSec: number;
+    duration: `${number} мин` | `${number} сек`;
     description: string;
 };

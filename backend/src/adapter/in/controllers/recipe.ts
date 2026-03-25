@@ -1,10 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import { createError } from "@/middleware/errorHandler";
 
-import type { RecipeService } from "@/services/recipeService";
+import type { CreateRecipeUseCase } from "@/application/use-cases/CreateRecipe";
+import type { GetRecipeByIDUseCase } from "@/application/use-cases/GetRecipeByID";
+import type { ListRecipesUseCase } from "@/application/use-cases/ListRecipes";
 
 export const createRecipeController = (
-    recipeService: RecipeService
+    listRecipes: ListRecipesUseCase,
+    getRecipeById: GetRecipeByIDUseCase,
+    createRecipe: CreateRecipeUseCase
 ) => ({
     getAll: async (
         req: Request,
@@ -12,7 +16,7 @@ export const createRecipeController = (
         next: NextFunction
     ) => {
         try {
-            const recipes = await recipeService.getAll();
+            const recipes = await listRecipes.execute(null);
             res.json(recipes);
         } catch (error) {
             next(error);
@@ -26,9 +30,9 @@ export const createRecipeController = (
     ) => {
         try {
             const { id } = req.params;
-            const recipe = await recipeService.getById(
-                id as string
-            );
+            const recipe = await getRecipeById.execute({
+                id: id as string,
+            });
 
             res.json(recipe);
         } catch (error) {
@@ -57,7 +61,7 @@ export const createRecipeController = (
                 );
             }
 
-            const recipe = await recipeService.create({
+            const recipe = await createRecipe.execute({
                 title,
                 description,
                 ingredients: Array.isArray(ingredients)
