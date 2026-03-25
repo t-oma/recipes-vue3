@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-import type { Prettify } from "@/types/utility";
+import type { Prettify } from "@/shared/types/utility";
 import type { MongoID } from ".";
 
 export type IUser = Prettify<

@@ -1,32 +1,18 @@
 import { model, Schema } from "mongoose";
 
-import { USER_DOCUMENT_NAME } from "./User";
+import { USER_DOCUMENT_NAME } from "./UserModel";
 import type { ObjectId } from "mongoose";
-import type { Prettify } from "@/types/utility";
+import type { Prettify } from "@/shared/types/utility";
 import type { MongoID } from ".";
 
-export const AVAILABLE_INGRIDIENT_UNITS = [
-    "г",
-    "кг",
-    "шт",
-] as const;
-
-export const ALTERNATIVE_INGRIDINT_UNIT =
-    "по вкусу" as const;
-
-export type RecipeIngridient = Prettify<
-    | {
-          name: string;
-          amount: number;
-          unit: (typeof AVAILABLE_INGRIDIENT_UNITS)[number];
-      }
-    | {
-          name: string;
-          amount: typeof ALTERNATIVE_INGRIDINT_UNIT;
-      }
->;
+export type RecipeIngridient = Prettify<{
+    name: string;
+    amount: number | "по вкусу";
+    units: string;
+}>;
 
 export type RecipeStep = Prettify<{
+    order: number;
     description: string;
     duration: `${number} мин` | `${number} сек`;
 }>;
@@ -44,7 +30,7 @@ export type IRecipe = Prettify<
         nutrients: RecipeNutrients;
         ingredients: RecipeIngridient[];
         steps: RecipeStep[];
-        author: ObjectId;
+        authorId: ObjectId;
         createdAt: Date;
         updatedAt: Date;
     } & MongoID
@@ -88,14 +74,9 @@ const ingridientSchema = new Schema<RecipeIngridient>(
                     'Amount must be a number or "по вкусу"',
             },
         },
-        unit: {
+        units: {
             type: String,
-            enum: [...AVAILABLE_INGRIDIENT_UNITS],
-            required: function (this: {
-                amount: number | string;
-            }) {
-                return typeof this.amount === "number";
-            },
+            required: true,
         },
     },
     { _id: false }
@@ -147,7 +128,7 @@ const recipeSchema = new Schema<IRecipe>(
                     "Recipe must have at least one step",
             },
         },
-        author: {
+        authorId: {
             type: Schema.Types.ObjectId,
             ref: USER_DOCUMENT_NAME,
             required: true,
